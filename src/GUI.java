@@ -8,7 +8,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -16,7 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
+/**
+ * class for building a GUI to query Wolfram Alpha using the methods from the assignment class
+ * 
+ * @author Stef
+ *
+ */
 public class GUI {
 
 	JFrame frame;
@@ -26,6 +30,9 @@ public class GUI {
 	JPanel searchPanel, resultPanel;
 	JTextArea outputField;
 	
+	/**
+	 * default constructor
+	 */
 	public GUI() {
 		// set up frame
 		JFrame frame = new JFrame();
@@ -189,6 +196,7 @@ public class GUI {
 				// get cached response
 				outputField.setText(Assignment.getCachedQuestion(counter));
 				
+				inputBox.setText("");
 				
 			} else {
 			

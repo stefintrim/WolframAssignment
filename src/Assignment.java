@@ -7,17 +7,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
-
 /*
  * GCD Student Number: 2866113
  * F / S Name: Stefan Compton
  * Email: stefancompton23@gmail.com
  * 
- * Make sure you comment your code appropriately
+ * Assignment class - the entry point for my Wolfram Alpha query program
  */
 public class Assignment {
-	
 	// create an int for output line length
 	static int lineLength = 60;
 	
@@ -32,7 +29,6 @@ public class Assignment {
 	static File answerFile = new File(answerFileString);
 	static File timeFile = new File(timeFileString);
 	
-	
 	// create some strings for displaying messages to user
 	static String welcomePrompt = "Welcome to the Wolfram Alpha search program.\n\n"
 			+ "Type any question and I will send it to the Wolfram Alpha answer engine.\n"
@@ -42,20 +38,18 @@ public class Assignment {
 	
 	static String userQuestionPrompt = "Enter your question or quit:";
 	static String repeatQuestion = "From my cache:";
-	
 	static String goodbyeMessage = "Goodbye.";
 	
-	
+	/**
+	 * Helper method to decode XML output from Wolfram Alpha
+	 * 
+	 *  @param xml - a string of XML 
+	 *  @return an arraylist of string arrays - the arraylist is of varable size and the arrays are of size
+	 *  		2, containing the tag and associated data
+	 *  
+	 */
 	public static ArrayList<String[]> decodeXML(String xml) {
-		/**
-		 * Helper method to decode XML output from Wolfram Alpha
-		 * 
-		 *  takes a string of xml and returns an arraylist of string arrays
-		 *  the string arrays, of size 2, have the tag and the associated data
-		 *  
-		 *  arraylist because we don't know what size it will be
-		 *  string array of size two because there is no pair class in java
-		 */
+		
 		
 	
 		// create our output arraylist
@@ -106,29 +100,28 @@ public class Assignment {
 		
 	}
 	
+	/**
+	 * helper method that checks whether a file exists and creates it if it doesn't
+	 * 
+	 * @param file the file object to be created
+	 * 
+	 */
 	public static void createFile(File file) throws IOException {
-		/**
-		 * helper method
-		 * 
-		 * checks whether a file exists and creates it if it doesn't
-		 */
-		
-		
-		// if that file does not exist (using .isFile() because .exists() will return true for a directory) 
+		// if the file does not exist (using .isFile() because .exists() will return true for a directory) 
 		if(!file.isFile()) {
 			// create the file
 			file.createNewFile();
 		}
 	}
-	
+
+	/**
+	 * helper method to query Wolfram Alpha 
+	 * @param question the question to pose to Wolfram Alpha
+	 * @return a custom type "Answer" which holds the text answer
+	 * and the type of the answer
+	 * 
+	 */
 	public static Answer queryWA(String question) {
-		/**
-		 * helper method to query WA - takes a string and 
-		 * returns a custom type "Answer" which holds the text answer
-		 * and the type of the answer
-		 * 
-		 */
-		
 		// Create an instance of the Wolfram Alpha API - including your AppID key
 		WolframAlpha WOLFRAM_ALPHA = new WolframAlpha("6RAGVP-P8JH6E3LYH");
 				
@@ -180,13 +173,14 @@ public class Assignment {
 		return new Answer(answer, responseType);
 	}
 	
+	/**
+	 * helper method to split a string into lines of a given length without breaking any words up
+	 * 
+	 * @param data the string to be split
+	 * @param lineLength the length of the line
+	 * @return the string broken with new line chars 
+	 */
 	public static String addLineBreaks(String data, int lineLength) {
-		/**
-		 * helper method to split a string into lines without breaking a word up
-		 * 
-		 * takes a string to be split and an int line length and returns a new string 
-		 */
-		
 		// create a result string 
 		String result = "";
 				
@@ -221,9 +215,17 @@ public class Assignment {
 		return result;
 	}
 
+	/**
+	 * helper method to generate the prefix string the program will use to present a result
+	 * based on the return from Wolfram Alpha 
+	 * @param respCode an int representing various WA response types - 1000 = result, 100 = response etc
+	 * @return string to be appended to an answer
+	 */
 	public static String generateResponse(int respCode) {
+		// create a string for our reply
 		String response;
 		
+		// switch on various values
 		switch (respCode) {
 		case 1000:
 			response = "The answer is: ";
@@ -248,13 +250,13 @@ public class Assignment {
 		
 	}
 	
+	/**
+	 * helper method to check if a question has been asked before
+	 * @param question the question in question
+	 * @return the line number for a question successfully found, or -1 if not found
+	 * @throws FileNotFoundException
+	 */
 	public static int questionHasBeenAsked(String question) throws FileNotFoundException {
-		/**
-		 * helper method to check if a question has been asked
-		 * if it has, return the line number of the file
-		 * if not, return -1
-		 */
-		
 		// read in the file questions.list 
 		Scanner questionScanner = new Scanner(questionFile);
 		
@@ -285,6 +287,12 @@ public class Assignment {
 		
 	}
 	
+	/**
+	 * static helper method that takes a line number in the result.list and returns the result at that line
+	 * @param line the line number
+	 * @return the result at that line composed of a string generated from the response type and the answer
+	 * @throws FileNotFoundException
+	 */
 	public static String getCachedQuestion(int line) throws FileNotFoundException {
 		// create a result string to return
 		String result = "";
@@ -299,7 +307,7 @@ public class Assignment {
 		String answer = answerScanner.nextLine();
 		
 		// append response to result - making it clear that this question was asked before
-		// the respose type is encoded as 4 digits at the start of the line
+		// the response type is encoded as 4 digits at the start of the line
 		result += repeatQuestion + "\n" + generateResponse(Integer.parseInt(answer.substring(0, 4))) + "\n";
 		
 		// append the answer with linebreaks
@@ -313,25 +321,27 @@ public class Assignment {
 		
 	}
 
+	/**
+	 * static helper method to calculate how long ago a timstamp is from now
+	 * @param timeStamp the timestamp to check
+	 * @return a string with useful information like "yesterday" or "3 hours ago"
+	 */
 	public static String getTimeDifference(long timeStamp) {
-		/**
-		 * helper method to calculate how long ago a timstamp is from
-		 * 
-		 * takes a "Long" time in milliseconds and returns a string to indicate how long ago it was
-		 */
+		// create a result string
 		String result;
 		
+		// get the tiome now and the diff between now and the timestamp = the age of the entry
 		long now = System.currentTimeMillis();
 		long age = now - timeStamp;
 		
 		
-		// some calcs from millis to ..
+		// some calcs from milliseconds to ..
 		long second = 1000;
 		long minute = 60 * second;
 		long hour = 60 * minute;
 		long day = 24 * hour;
 		long year = 365 * day;
-		long today = (now % day); // number of millis today
+		long today = (now % day); // number of milliseconds so far today
 		
 		if (age > year) {
 			result = "over a year ago.";
@@ -356,13 +366,12 @@ public class Assignment {
 		return result;
 	}
 	
+	/**
+	 * helper method to delete a line from all 3 files - question, answer and timestamp files
+	 * @param line the number of the line to delete - starting at 0 for first line
+	 * @throws IOException
+	 */
 	public static void deleteLine(int line) throws IOException {
-		/**
-		 * helper method to delete a line from all 3 files
-		 * 
-		 * takes an int for the line number
-		 * 
-		 */
 		// create 3 temp files
 		
 		File tempQFile = new File("tempQFile");
@@ -424,6 +433,12 @@ public class Assignment {
 		
 	}
 
+	/**
+	 * static helper to get a timestamp at a given line number
+	 * @param line the line number starting at 0
+	 * @return a timestamp of type long because it won't fit into an int
+	 * @throws IOException
+	 */
 	public static long getTime(int line) throws IOException {
 		// create a scanner
 		Scanner timeScanner = new Scanner(timeFile);
@@ -443,19 +458,23 @@ public class Assignment {
 		return Long.parseLong(timeString);
 	}
 
+	/**
+	 * Static helper method to write an entry to the files
+	 * @param input the question posed to WA
+	 * @param answer an answer object encoding the reply and the type of that reply
+	 * @throws IOException
+	 */
 	public static void writeToFiles(String input, Answer answer) throws IOException {
 		// create printwriter objects to write to the output files
 		PrintWriter questionOutput = new PrintWriter(new BufferedWriter(new FileWriter(questionFileString, true)));
 		PrintWriter answerOutput = new PrintWriter(new BufferedWriter(new FileWriter(answerFileString, true)));
 		PrintWriter timeOutput = new PrintWriter(new BufferedWriter(new FileWriter(timeFileString, true))); 
 		
-		// write the question to the question file, the answer to the answer file
-		// and a timestamp to the time file
-		
-		
+		// write the question to the question file
+		// write the answer to the answer file with a response type prefix
+		// write a timestamp to the time file
 		questionOutput.println(input);
-		answerOutput.printf("%04d", answer.getResponseType());
-		answerOutput.println(answer.getAnswer() + "\n");
+		answerOutput.println(String.format("%04d", answer.getResponseType()) + answer.getAnswer());
 		timeOutput.println(System.currentTimeMillis());
 		
 		// close the PrintWriter objects
@@ -464,36 +483,12 @@ public class Assignment {
 		timeOutput.close();
 	}
 	
-	
-	
+	/**
+	 * The text based version of my Wolfram Alpha query program
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
-		/***
-		 * main method - prompts user for questions to put to the Wolfram Alpha search engine
-		 * If an answer is found is is appended to the answers.list file, and the question is appended to questions.list
-		 * A timestamp is appended to time.list  
-		 * 
-		 * If a question has been asked before, the user is given the age of the
-		 * cached answer, and asked whether to query WA again or see the cached answer
-		 * 
-		 ******* A series of text inputs and expected answers *******
-		 * 
-		 * Who is the president of Ireland?
-		 * Michael D. Higgins
-		 * 
-		 * What is the square root of minus one?
-		 * i
-		 * 
-		 * How many roads must a man walk down?
-		 * The answer, my friend, is blowin' in the wind. (according to the song written by Bob Dylan and released on his 1963 album The Freewheelin' Bob Dylan)
-		 * 
-		 * What is the square root of minus one?
-		 * This question has been asked before.
-		 * i
-		 * 
-		 */
-		
-			
-		
 		// check questions.list and answers.list exist and make them if they don't
 		
 		// create a question and an answer files
@@ -545,14 +540,14 @@ public class Assignment {
 				
 				System.out.println("That has been searched before. I have a result from " + timeDiff);
 				System.out.println("Would you like me to search again, or give you the cached result?");
-				System.out.println("Type 'A' to search again");
+				System.out.println("Type 'a' to search again");
 				String cacheReply = typedInput.nextLine();
 
 
 
 				
 				// present the user with the option of reasking the question
-				if (cacheReply.equalsIgnoreCase("A")) {
+				if (cacheReply.equalsIgnoreCase("A") || cacheReply.equalsIgnoreCase("'a'")) {
 					// delete the lines in all 3 files
 					deleteLine(counter);
 					// set counter back to -1 so the question is asked again
@@ -589,8 +584,6 @@ public class Assignment {
 					// write question, answer and timestamp to file
 					writeToFiles(userInput, answerObject);
 					
-					
-					
 				}
 			}
 			
@@ -601,9 +594,6 @@ public class Assignment {
 				userInput = typedInput.nextLine();
 			} while (userInput.trim().equals(""));
 			
-			
-			
-		
 		}
 		
 		// close off open user input scanner
@@ -617,16 +607,5 @@ public class Assignment {
 			// print out goodbye message to the console
 			System.out.println(goodbyeMessage);
 		}
-		
-		
-		
-		
-		
 	}
-	
-	
-	// Timestamp == if the answer is old ask whether to ping the server
-	// response versus answer
-	// create methods
-	
 }
