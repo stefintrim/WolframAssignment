@@ -17,10 +17,6 @@ import java.util.Scanner;
  * Make sure you comment your code appropriately
  */
 public class Assignment {
-	// files to read and write
-	static File questionFile;
-	static File answerFile;
-	static File timeFile;
 	
 	// create an int for output line length
 	static int lineLength = 60;
@@ -30,6 +26,11 @@ public class Assignment {
 	static String questionFileString = "questions.list";
 	static String answerFileString = "answers.list";
 	static String timeFileString = "times.list";
+	
+	// files to read and write
+	static File questionFile = new File(questionFileString);
+	static File answerFile = new File(answerFileString);
+	static File timeFile = new File(timeFileString);
 	
 	
 	// create some strings for displaying messages to user
@@ -422,7 +423,25 @@ public class Assignment {
 
 		
 	}
-	
+
+	public static long getTime(int line) throws IOException {
+		// create a scanner
+		Scanner timeScanner = new Scanner(timeFile);
+		
+		// consume the lines preceding the line we want
+		for (int i = 0; i < line; i++) timeScanner.nextLine();
+		
+		// get the timestamp we'll parse the int in two parts to get a long
+		// the timestamp is going to be 13 chars - it will increase to 14 chars
+		// in about 280 years 
+		String timeString = timeScanner.nextLine();
+		
+		// close the scanner
+		timeScanner.close();
+		
+		// return the time(long)
+		return Long.parseLong(timeString);
+	}
 	public static void main(String[] args) throws IOException {
 		/***
 		 * main method - prompts user for questions to put to the Wolfram Alpha search engine
@@ -453,12 +472,8 @@ public class Assignment {
 		
 		// check questions.list and answers.list exist and make them if they don't
 		
-		// create a question and an answer file objects
+		// create a question and an answer files
 		// also a file containing timestamps in order to check for stale results
-		questionFile = new File(questionFileString);
-		answerFile = new File(answerFileString);
-		timeFile = new File(timeFileString);
-		
 		createFile(questionFile);
 		createFile(answerFile);
 		createFile(timeFile);
@@ -497,22 +512,7 @@ public class Assignment {
 			// if the counter is a line number = question has been asked before
 			if (counter > -1) {
 				// get the timeStamp the question was asked before
-				// create a scanner
-				Scanner timeScanner = new Scanner(timeFile);
-				
-				// consume the lines preceding the line we want
-				for (int i = 0; i < counter; i++) timeScanner.nextLine();
-				
-				// get the timestamp we'll parse the int in two parts to get a long
-				// the timestamp is going to be 13 chars - it will increase to 14 chars
-				// in about 280 years 
-				String timeString = timeScanner.nextLine();
-				
-				// close the scanner
-				timeScanner.close();
-				
-				// first get the last 6 chars
-				long timeStamp = Long.parseLong(timeString);
+				long timeStamp = getTime(counter);
 				
 				// get the difference between now and the timestamp
 				// in String form and easily digested (yesteday, 3 days ago, 2 hours ago etc)
@@ -530,7 +530,6 @@ public class Assignment {
 				// present the user with the option of reasking the question
 				if (cacheReply.equalsIgnoreCase("A")) {
 					// delete the lines in all 3 files
-					System.out.println("calling deleteLine with " + counter);
 					deleteLine(counter);
 					// set counter back to -1 so the question is asked again
 					counter = -1;
