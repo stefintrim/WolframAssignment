@@ -442,6 +442,30 @@ public class Assignment {
 		// return the time(long)
 		return Long.parseLong(timeString);
 	}
+
+	public static void writeToFiles(String input, Answer answer) throws IOException {
+		// create printwriter objects to write to the output files
+		PrintWriter questionOutput = new PrintWriter(new BufferedWriter(new FileWriter(questionFileString, true)));
+		PrintWriter answerOutput = new PrintWriter(new BufferedWriter(new FileWriter(answerFileString, true)));
+		PrintWriter timeOutput = new PrintWriter(new BufferedWriter(new FileWriter(timeFileString, true))); 
+		
+		// write the question to the question file, the answer to the answer file
+		// and a timestamp to the time file
+		
+		
+		questionOutput.println(input);
+		answerOutput.printf("%04d", answer.getResponseType());
+		answerOutput.println(answer.getAnswer() + "\n");
+		timeOutput.println(System.currentTimeMillis());
+		
+		// close the PrintWriter objects
+		questionOutput.close();
+		answerOutput.close();
+		timeOutput.close();
+	}
+	
+	
+	
 	public static void main(String[] args) throws IOException {
 		/***
 		 * main method - prompts user for questions to put to the Wolfram Alpha search engine
@@ -563,27 +587,10 @@ public class Assignment {
 					
 					
 					// write question, answer and timestamp to file
-					
-					// create printwriter objects to write to the output files
-					PrintWriter questionOutput = new PrintWriter(new BufferedWriter(new FileWriter(questionFileString, true)));
-					PrintWriter answerOutput = new PrintWriter(new BufferedWriter(new FileWriter(answerFileString, true)));
-					PrintWriter timeOutput = new PrintWriter(new BufferedWriter(new FileWriter(timeFileString, true))); 
-					
-					// write the question to the question file, the answer to the answer file
-					// and a timestamp to the time file
-					
-					
-					questionOutput.println(userInput);
-					answerOutput.printf("%04d", answerObject.getResponseType());
-					answerOutput.println(answer + "\n");
-					timeOutput.println(System.currentTimeMillis());
+					writeToFiles(userInput, answerObject);
 					
 					
 					
-					// close the PrintWriter objects
-					questionOutput.close();
-					answerOutput.close();
-					timeOutput.close();
 				}
 			}
 			

@@ -195,9 +195,17 @@ public class GUI {
 			
 				// query WA
 				answer = Assignment.queryWA(inputBox.getText());
+				
+				// create a reply to be displayed to the user
 				String response = "";
+				response += Assignment.generateResponse(answer.getResponseType());
 				response += answer.getAnswer(); 
 				outputField.setText(response);
+				
+				// write the files
+				Assignment.writeToFiles(userInput, answer);
+				
+				// clear the search from the text box
 				inputBox.setText("");
 			}
 			
