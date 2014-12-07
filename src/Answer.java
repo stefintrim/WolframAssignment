@@ -1,8 +1,11 @@
-/**
+/*
+ *
+ * GCD Student Number: 2866113
+ * F / S Name: Stefan Compton
+ * Email: stefancompton23@gmail.com
+ * 
  * custom immutable type for passing interpreted answers 
  * consisting of a response code and a string answer
- * 
- * @author Stefan
  *
  */
 public class Answer {

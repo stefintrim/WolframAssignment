@@ -308,7 +308,7 @@ public class Assignment {
 		
 		// append response to result - making it clear that this question was asked before
 		// the response type is encoded as 4 digits at the start of the line
-		result += repeatQuestion + "\n" + generateResponse(Integer.parseInt(answer.substring(0, 4))) + "\n";
+		result += repeatQuestion + "\n\n" + generateResponse(Integer.parseInt(answer.substring(0, 4))) + "\n";
 		
 		// append the answer with linebreaks
 		result += addLineBreaks(answer.substring(4), lineLength);
@@ -538,8 +538,10 @@ public class Assignment {
 				String timeDiff = getTimeDifference(timeStamp);
 				
 				
-				System.out.println("That has been searched before. I have a result from " + timeDiff);
-				System.out.println("Would you like me to search again, or give you the cached result?");
+				System.out.println("That has been searched before. Here is the result from " + timeDiff + "..");
+				System.out.println(getCachedQuestion(counter));
+				System.out.println();
+				System.out.println("Would you like me to search again and update my cached result?");
 				System.out.println("Type 'a' to search again");
 				String cacheReply = typedInput.nextLine();
 
@@ -556,13 +558,7 @@ public class Assignment {
 				
 			}
 			
-			if (counter > -1) {
-				
-				System.out.println(getCachedQuestion(counter));
-				
-				
-			// otherwise query WA	
-			} else {
+			if (counter == -1) {
 				
 				// get a custom Answer object with the query results
 				Answer answerObject = queryWA(userInput);
@@ -570,7 +566,7 @@ public class Assignment {
 				// get the answer string using the getter
 				answer = answerObject.getAnswer();
 				
-				if (answerObject.getResponseType() > 0) {
+				if (answerObject.getResponseType() >= 0) {
 					
 					// create a string for the response based on WA response type
 					String response = generateResponse(answerObject.getResponseType());
